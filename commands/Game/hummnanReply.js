@@ -1,6 +1,3 @@
-// systems/humanReply.js
-
-// قاعدة بيانات الردود الذكية (بنمط بشري)
 const humanReplies = {
   greetings: [
     "اهلاً وسهلاً يا سنافري ❤️",
@@ -39,15 +36,12 @@ const humanReplies = {
   ]
 };
 
-// كلمات مفتاحية للتصنيف
 const detectIntent = (body, mentionsBot) => {
   const text = body.toLowerCase();
-
   if (mentionsBot) return "name_mentions";
-  if (["هلا", "سلام", "اهلا", "هيي", "هاي"].some(word => text.includes(word))) return "greetings";
-  if (["؟", "سؤال", "شلون", "وش", "هل", "كيف", "متى", "ليش"].some(word => text.includes(word))) return "questions";
-  if (["بحبك", "احبك", "حلو", "جميل", "تحبني", "تحبني؟"].some(word => text.includes(word))) return "affection";
-
+  if (["هلا", "سلام", "اهلا", "هيي", "هاي"].some(w => text.includes(w))) return "greetings";
+  if (["؟", "سؤال", "شلون", "وش", "هل", "كيف", "متى", "ليش"].some(w => text.includes(w))) return "questions";
+  if (["بحبك", "احبك", "حلو", "جميل", "تحبني"].some(w => text.includes(w))) return "affection";
   return "vague";
 };
 
@@ -55,12 +49,22 @@ export const getHumanReply = (senderName, body, mentionsBot) => {
   const intent = detectIntent(body, mentionsBot);
   const replies = humanReplies[intent];
   const randomReply = replies[Math.floor(Math.random() * replies.length)];
-
-  // بعض الردود تضيف اسم المرسل
   let finalReply = randomReply;
   if (finalReply.includes("يا سنافري") && senderName) {
     finalReply = finalReply.replace("يا سنافري", `يا ${senderName}`);
   }
-
   return finalReply;
+};
+
+export default {
+  name: "رد_بشري",
+  description: "ردود ذكية بأسلوب بشري تلقائياً",
+  cooldowns: 3,
+  aliases: ["humanreply"],
+  execute: async ({ api, event, args }) => {
+    const body = args.join(" ") || "سلام";
+    const mentionsBot = body.includes("snfor") || body.includes("بوت");
+    const reply = getHumanReply(null, body, mentionsBot);
+    await api.sendMessage(reply, event.threadID, event.messageID);
+  },
 };

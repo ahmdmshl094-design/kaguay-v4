@@ -8,6 +8,7 @@ export const commandMiddleware = async () => {
       if (fs.statSync(`./commands/${directory}`).isDirectory()) {
         const cmd = await fs.readdir(`./commands/${directory}`);
         for (const command of cmd) {
+          if (!command.endsWith(".js")) continue;
           try {
             const commands = (await import(`../commands/${directory}/${command}`)).default;
             if (commands?.onLoad && typeof commands?.onLoad == "function") {
