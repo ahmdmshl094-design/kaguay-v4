@@ -1,5 +1,5 @@
 export default {
-  name: "مساعدة",
+  name: "اوامر",
   version: "1.5",
   hasPermission: "users",
   credits: "حمودي سان 🇸🇩",
