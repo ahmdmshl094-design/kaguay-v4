@@ -87,3 +87,27 @@ ignorePorts = false
 [[ports]]
 localPort = 3000
 externalPort = 80
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "تشغيل البوت"
+
+[[workflows.workflow]]
+name = "تشغيل البوت"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node app.js"
+waitForPort = 3000
+
+[workflows.workflow.metadata]
+outputType = "console"

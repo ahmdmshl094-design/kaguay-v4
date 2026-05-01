@@ -1,15 +1,15 @@
-import jimp from 'jimp';
+import { Jimp } from 'jimp';
 import fs from 'fs';
 
 async function bal(one, two) {
     let avatarOne = await circle(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
     let avatarTwo = await circle(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
 
-    let avone = await jimp.read(await circle(avatarOne));
-    let avtwo = await jimp.read(await circle(avatarTwo));
+    let avone = await Jimp.read(await circle(avatarOne));
+    let avtwo = await Jimp.read(await circle(avatarTwo));
 
     // استخدام رابط الصورة الجديد
-    let img = await jimp.read("https://i.imgur.com/hmKmmam.jpg");
+    let img = await Jimp.read("https://i.imgur.com/hmKmmam.jpg");
 
     // تحديث الإحداثيات والمقاسات
     img.resize(1024, 712)
@@ -17,14 +17,14 @@ async function bal(one, two) {
        .composite(avtwo.resize(200, 200), 389, 407);
 
     const pth = "زواج.png";
-    await img.writeAsync(pth);
+    await img.write(pth);
     return pth;
 }
 
 async function circle(url) {
-    const img = await jimp.read(url);
+    const img = await Jimp.read(url);
     img.circle();
-    return await img.getBufferAsync(jimp.MIME_PNG);
+    return await img.getBufferAsync(JimpMime.PNG);
 }
 
 export default {

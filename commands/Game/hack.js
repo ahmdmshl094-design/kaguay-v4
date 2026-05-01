@@ -1,13 +1,33 @@
-client.on('message', (message) => {
-  const body = message.body?.trim();
+export default {
+  name: "اخترق",
+  description: "نظام اختراق وهمي للمتعة",
+  aliases: ["hack"],
+  cooldowns: 10,
+  execute: async ({ api, event, args }) => {
+    const { threadID, messageID, senderID, mentions } = event;
 
-  if (body.startsWith("!اخترق") || body.startsWith("!hack")) {
-    // احصل على المستخدم الموجه إليه الأمر (مثل @mention)
-    const mention = message.mentions ? Object.keys(message.mentions)[0] : null;
-    const targetName = mention ? message.mentions[mention].replace("@", "") : message.senderName;
+    const mention = mentions ? Object.keys(mentions)[0] : null;
+    const targetName = mention
+      ? mentions[mention]
+      : args.join(" ") || "مجهول";
 
-    // رسالة "الاختراق الوهمي"
-    const hackMessage = `
-🧩 *نظام الاختراق الوهمي - snfor v1.0* 🧩
-──────────────────────
-🟢
+    const steps = [
+      "🔍 جاري البحث عن الهدف...",
+      "🌐 الاتصال بالشبكة المشفرة...",
+      "🔓 كسر طبقة الحماية الأولى...",
+      "💾 استخراج البيانات...",
+      "✅ تم الاختراق بنجاح!",
+    ];
+
+    const hackMessage =
+      `🧩 نظام الاختراق الوهمي - snfor v1.0 🧩\n` +
+      `──────────────────────\n` +
+      `🎯 الهدف: ${targetName}\n` +
+      `──────────────────────\n` +
+      steps.map((s, i) => `${i + 1}. ${s}`).join("\n") +
+      `\n──────────────────────\n` +
+      `⚠️ هذا للمتعة فقط ولا يمثل اختراقًا حقيقيًا!`;
+
+    await api.sendMessage(hackMessage, threadID, messageID);
+  },
+};

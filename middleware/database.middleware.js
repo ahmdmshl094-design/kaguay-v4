@@ -13,26 +13,14 @@ import fs from "fs";
             useUnifiedTopology: true,
           });
           log([
-            {
-              message: "[ DATABASE ]: ",
-              color: "green",
-            },
-            {
-              message: "Successfully connected to the database",
-              color: "white",
-            },
+            { message: "[ قاعدة البيانات ]: ", color: "green" },
+            { message: "تم الاتصال بقاعدة البيانات بنجاح", color: "white" },
           ]);
         } catch (error) {
           console.log(error);
           log([
-            {
-              message: "[ DATABASE ]: ",
-              color: "red",
-            },
-            {
-              message: "Unable to connect to the database",
-              color: "white",
-            },
+            { message: "[ قاعدة البيانات ]: ", color: "red" },
+            { message: "تعذر الاتصال بقاعدة البيانات", color: "white" },
           ]);
           process.exit(0);
         }
@@ -48,17 +36,10 @@ import fs from "fs";
         createIfNotExists("./database/threads.json");
 
         log([
-          {
-            message: "[ DATABASE ]: ",
-            color: "green",
-          },
-          {
-            message: "Connected to JSON database",
-            color: "white",
-          },
+          { message: "[ قاعدة البيانات ]: ", color: "green" },
+          { message: "تم الاتصال بقاعدة البيانات JSON بنجاح", color: "white" },
         ]);
       }
       break;
   }
 })();
-            

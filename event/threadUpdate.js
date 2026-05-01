@@ -128,9 +128,9 @@ async function handleApprovalModeChange(api, event, Threads, threads) {
     approvalMode: APPROVAL_MODE === 0 ? false : true,
   });
 
-  const action = APPROVAL_MODE === 0 ? "تفعيل" : "❌ تعطيل ✅";
+  const action = APPROVAL_MODE === 1 ? "✅ تفعيل" : "❌ تعطيل";
   api.sendMessage(
-    `تم ${action} ميزة الموافقة في المجموعة 🔖 |<${event.threadID}> - ${threads.name}`,
+    `تم ${action} ميزة الموافقة في المجموعة 🔖 | <${event.threadID}> - ${threads.name}`,
     event.threadID
   );
 }

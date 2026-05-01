@@ -1,10 +1,14 @@
-if (body === "!احذف") {
-  // يحذف الرسالة السابقة اللي أرسلها البوت
-  const lastMessageID = global.client.lastBotMessageID; // لازم تخزن آخر رسالة
-  if (lastMessageID) {
-    api.unsendMessage(lastMessageID);
-    message.reply("✅ تم حذف الرسالة.");
-  } else {
-    message.reply("❌ ما فيش رسالة للحذف.");
-  }
-}
+export default {
+  name: "احذف",
+  description: "يحذف رسالة البوت الأخيرة",
+  cooldowns: 3,
+  execute: async ({ api, event }) => {
+    const { threadID, messageID } = event;
+    const lastMessageID = global.client?.lastBotMessageID;
+    if (lastMessageID) {
+      api.unsendMessage(lastMessageID);
+    } else {
+      await api.sendMessage("❌ لا توجد رسالة للحذف.", threadID, messageID);
+    }
+  },
+};

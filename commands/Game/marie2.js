@@ -1,7 +1,7 @@
 import path from 'path';
 import axios from 'axios';
 import fs from 'fs-extra';
-import jimp from 'jimp';
+import { Jimp } from 'jimp';
 
 export default {
   name: "زواج",
@@ -83,7 +83,7 @@ async function makeImage({ one, two }) {
   const pathImg = path.resolve(process.cwd(), 'cache', `pairing_${one}_${two}.png`);
   const avatarOne = path.resolve(process.cwd(), 'cache', `avt_${one}.png`);
   const avatarTwo = path.resolve(process.cwd(), 'cache', `avt_${two}.png`);
-  const pairingImg = await jimp.read(path.resolve(process.cwd(), 'cache', 'pairing.png'));
+  const pairingImg = await Jimp.read(path.resolve(process.cwd(), 'cache', 'pairing.png'));
 
   const getAvatarOne = (await axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
   fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
@@ -91,8 +91,8 @@ async function makeImage({ one, two }) {
   const getAvatarTwo = (await axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
   fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
 
-  const circleOne = await jimp.read(await circle(avatarOne));
-  const circleTwo = await jimp.read(await circle(avatarTwo));
+  const circleOne = await Jimp.read(await circle(avatarOne));
+  const circleTwo = await Jimp.read(await circle(avatarTwo));
   
   pairingImg.composite(circleOne.resize(150, 150), 980, 200)
             .composite(circleTwo.resize(150, 150), 140, 200);
@@ -106,7 +106,7 @@ async function makeImage({ one, two }) {
 }
 
 async function circle(imagePath) {
-  const image = await jimp.read(imagePath);
+  const image = await Jimp.read(imagePath);
   image.circle();
   return await image.getBufferAsync("image/png");
 }

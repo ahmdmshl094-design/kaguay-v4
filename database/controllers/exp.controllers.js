@@ -8,7 +8,7 @@ export default function ({ api, event }) {
     if (!users.status) {
       return {
         status: false,
-        data: "User information not found",
+        data: "معلومات المستخدم غير موجودة",
       };
     }
 
@@ -31,18 +31,18 @@ export default function ({ api, event }) {
           if (newLevel > currentLevel) {
             return {
               status: "level_up",
-              data: `User has leveled up to level ${newLevel}`,
+              data: `ارتقى المستخدم إلى المستوى ${newLevel}`,
             };
           } else {
             return {
               status: true,
-              data: `User's experience increased by ${expIncrease}`,
+              data: `تمت زيادة خبرة المستخدم بمقدار ${expIncrease}`,
             };
           }
         } else {
           return {
             status: false,
-            data: "Error updating user information",
+            data: "حدث خطأ أثناء تحديث بيانات المستخدم",
           };
         }
       }
@@ -62,10 +62,11 @@ export default function ({ api, event }) {
           },
         };
       }
+
       default:
         return {
           status: false,
-          data: "Invalid action",
+          data: "نوع العملية غير صالح",
         };
     }
   };

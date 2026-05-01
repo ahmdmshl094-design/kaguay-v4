@@ -2,25 +2,11 @@ import { CommandHandler } from "../handler/handlers.js";
 import { threadsController, usersController, economyControllers, expControllers } from "../database/controllers/index.js";
 import { utils } from "../helper/index.js";
 
-/**
- * Create an event handler with specific objects and arguments.
- * @param {object} api - API object.
- * @param {object} event - Specific event.
- * @param {object} User - User object.
- * @param {object} Thread - Thread object.
- * @param {object} Economy - Economy object.
- * @param {object} Exp - Experience object.
- * @returns {CommandHandler} - Command handler.
- */
 const createHandler = (api, event, User, Thread, Economy, Exp) => {
   const args = { api, event, Users: User, Threads: Thread, Economy, Exp };
   return new CommandHandler(args);
 };
 
-/**
- * Handle the main event.
- * @param {object} options - Event handling options.
- */
 const listen = async ({ api, event }) => {
   try {
     const { threadID, senderID, type, userID, from, isGroup } = event;
@@ -33,7 +19,10 @@ const listen = async ({ api, event }) => {
       if (isGroup) {
         await Thread.create(threadID);
       }
-      await User.create(senderID || userID || from);
+      const resolvedID = senderID || userID || from;
+      if (resolvedID) {
+        await User.create(resolvedID);
+      }
     }
 
     global.kaguya = utils({ api, event });
@@ -56,7 +45,7 @@ const listen = async ({ api, event }) => {
         break;
     }
   } catch (error) {
-    console.error("Error during event handling:", error);
+    console.error("[ خطأ ]: حدث خطأ أثناء معالجة الحدث:", error);
   }
 };
 

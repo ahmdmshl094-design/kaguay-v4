@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import jimp from "jimp";
+import { Jimp } from "jimp";
 
 // بقية الكود هنا
 export default {
@@ -36,10 +36,10 @@ export default {
 };
 
 async function bal(one) {
-  const avatarone = await jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
-  const image = await jimp.read("https://i.ibb.co/hV4qzCV/image.jpg");
+  const avatarone = await Jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
+  const image = await Jimp.read("https://i.ibb.co/hV4qzCV/image.jpg");
   image.resize(512, 512).composite(avatarone.resize(173, 173), 70, 186);
   const imagePath = "wholesome.png";
-  await image.writeAsync(imagePath);
+  await image.write(imagePath);
   return imagePath;
 }

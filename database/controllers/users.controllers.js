@@ -38,7 +38,7 @@ export default function ({ api }) {
     } catch (error) {
       return {
         status: false,
-        data: "Đã xảy ra lỗi hệ thống!",
+        data: "حدث خطأ في النظام!",
       };
     }
   };
@@ -61,7 +61,7 @@ export default function ({ api }) {
 
       return {
         status: deletedCount === 1,
-        data: "Xoá dữ liệu người dùng thành công",
+        data: "تم حذف بيانات المستخدم بنجاح",
       };
     } catch (error) {
       return {
@@ -73,11 +73,10 @@ export default function ({ api }) {
 
   const create = async (uid) => {
     try {
-      // Validate that uid is provided and not empty
       if (!uid) {
         return {
           status: false,
-          data: "UID is required to create a user.",
+          data: "يجب توفير المعرف UID لإنشاء المستخدم.",
         };
       }
 
@@ -86,7 +85,7 @@ export default function ({ api }) {
       if (user.status) {
         return {
           status: false,
-          data: "Người dùng đã tồn tại trong hệ thống database!",
+          data: "المستخدم موجود بالفعل في قاعدة البيانات!",
         };
       }
 
@@ -111,7 +110,7 @@ export default function ({ api }) {
           profileUrl: userData?.profileUrl || "",
           isFriend: userData?.isFriend || false,
           isBirthday: userData?.isBirthday || false,
-          gender: userData?.gender == 2 ? "Nam" : userData?.gender == 1 ? "Nữ" : "Không xác định",
+          gender: userData?.gender == 2 ? "ذكر" : userData?.gender == 1 ? "أنثى" : "غير محدد",
           other: {},
         },
       };
@@ -122,18 +121,18 @@ export default function ({ api }) {
         usersData.push(dataUser);
         fs.writeFileSync(filePath, JSON.stringify(usersData, null, 2));
         newUser = usersData;
-      } 
+      }
       if (databaseType === "mongodb") {
         newUser = await userModels.create(dataUser);
       }
 
       log([
         {
-          message: "[ USER ] : ",
+          message: "[ المستخدم ]: ",
           color: "yellow",
         },
         {
-          message: `Đã tạo thành công dữ liệu cho user `,
+          message: "تم إنشاء بيانات المستخدم بنجاح ",
           color: "green",
         },
         {
@@ -154,7 +153,6 @@ export default function ({ api }) {
       };
     }
   };
-
 
   const update = async (uid, data) => {
     try {
@@ -237,7 +235,7 @@ export default function ({ api }) {
       console.error(error);
       return {
         status: false,
-        data: "Xảy ra lỗi hệ thống!",
+        data: "حدث خطأ في النظام!",
       };
     }
   };

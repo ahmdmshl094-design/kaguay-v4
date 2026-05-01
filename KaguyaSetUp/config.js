@@ -1,8 +1,8 @@
 // KaguyaSetUp/config.js
 export default {
     prefix: "",
-    BOT_NAME: "dora",
-    ADMIN_IDS: ["100001234567890"], // ← غيره إلى معرفك الحقيقي على فيسبوك
+    BOT_NAME: "سومو",
+    ADMIN_IDS: ["61574389805906"], // ← غيره إلى معرفك الحقيقي على فيسبوك
     botEnabled: true,
     autogreet: true,
     options: {

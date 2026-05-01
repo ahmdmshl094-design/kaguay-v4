@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import jimp from "jimp";
+import { Jimp } from "jimp";
 
 export default {
   name: "قبر",
@@ -35,8 +35,8 @@ export default {
 };
 
 async function bal(one) {
-  const avatarone = await jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
-  const image = await jimp.read("https://i.imgur.com/A4quyh3.jpg");
+  const avatarone = await Jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
+  const image = await Jimp.read("https://i.imgur.com/A4quyh3.jpg");
 
   // تحديد إحداثيات الصورة الشخصية في الصورة النهائية
   const avatarX = 160; // موقع الصورة الشخصية على محور X
@@ -44,6 +44,6 @@ async function bal(one) {
 
   image.resize(500, 670).composite(avatarone.resize(173, 173), avatarX, avatarY);
   const imagePath = "rip.jpg";
-  await image.writeAsync(imagePath);
+  await image.write(imagePath);
   return imagePath;
 }

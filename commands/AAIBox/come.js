@@ -1,25 +1,25 @@
 import fs from 'fs';
 import path from 'path';
-import jimp from 'jimp';
+import { Jimp } from 'jimp';
 
 const generateImage = async (userOneId, userTwoId) => {
     const avOneUrl = `https://graph.facebook.com/${userOneId}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
     const avTwoUrl = `https://graph.facebook.com/${userTwoId}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
 
-    const avOne = await jimp.read(avOneUrl);
+    const avOne = await Jimp.read(avOneUrl);
     avOne.circle();
 
-    const avTwo = await jimp.read(avTwoUrl);
+    const avTwo = await Jimp.read(avTwoUrl);
     avTwo.circle();
 
     const imagePath = path.join(process.cwd(), 'cache', 'ball.png');
-    const img = await jimp.read('https://imgur.com/vcG4det.jpg');
+    const img = await Jimp.read('https://imgur.com/vcG4det.jpg');
 
     img.resize(700, 440)
        .composite(avOne.resize(50, 50), 287, 97)   // Updated coordinates and size for the first user
        .composite(avTwo.resize(40, 40), 50, 137);  // Updated coordinates and size for the second user
 
-    await img.writeAsync(imagePath);
+    await img.write(imagePath);
     return imagePath;
 };
 

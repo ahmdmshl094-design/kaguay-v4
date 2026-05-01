@@ -1,17 +1,17 @@
 import fs from "fs-extra";
-import jimp from "jimp";
+import { Jimp } from "jimp";
 
 async function bal(id, men) {
-  let avone = await jimp.read(`https://graph.facebook.com/${id}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
+  let avone = await Jimp.read(`https://graph.facebook.com/${id}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
   avone.circle();
-  let avtwo = await jimp.read(`https://graph.facebook.com/${men}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
+  let avtwo = await Jimp.read(`https://graph.facebook.com/${men}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
   avtwo.circle();
   let pth = "abcd.png";
-  let img = await jimp.read("https://i.imgur.com/ES28alv.png");
+  let img = await Jimp.read("https://i.imgur.com/ES28alv.png");
 
   img.resize(500, 670).composite(avone.resize(111, 111), 48, 410);
 
-  await img.writeAsync(pth);
+  await img.write(pth);
   return pth;
 }
 

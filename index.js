@@ -132,7 +132,8 @@ class snfor {
       // ✅ استماع آمن مع try/catch
       api.listen(async (err, event) => {
         if (err) {
-          log([{ message: "[ استماع ]: ", color: "red" }, { message: err.message, color: "white" }]);
+          const errMsg = err?.message || JSON.stringify(err) || "خطأ غير معروف";
+          log([{ message: "[ استماع ]: ", color: "red" }, { message: errMsg, color: "white" }]);
           return;
         }
 

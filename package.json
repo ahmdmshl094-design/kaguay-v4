@@ -23,8 +23,8 @@
     "url": "https://github.com/hamoudisan/snfor-bot.git"
   },
   "dependencies": {
-    "@xaviabot/fca-unofficial": "^1.4.0",
     "@xaviabot/fb-downloader": "^1.0.14",
+    "@xaviabot/fca-unofficial": "^1.4.0",
     "axios": "^1.7.7",
     "blessed": "^0.1.81",
     "bluebird": "^3.7.2",
@@ -36,7 +36,17 @@
     "figlet": "^1.6.0",
     "form-data": "^4.0.0",
     "fs-extra": "^11.1.1",
-    "gradient-string": "^2.0.2"
+    "gradient-string": "^2.0.2",
+    "jimp": "^1.6.1",
+    "moment-timezone": "^0.6.2",
+    "mongoose": "^9.6.1",
+    "node-fetch": "^3.3.2",
+    "node-notifier": "^10.0.1",
+    "pastebin-js": "^1.0.6",
+    "semver": "^7.7.4",
+    "srod-v2": "^1.0.2",
+    "tinyurl": "^1.1.7",
+    "weather-js": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -8,58 +8,42 @@ export const eventMiddleware = async () => {
       if (!event.endsWith(".js")) {
         continue;
       }
-      const events = (await import(`../event/${event}`)).default;
-      if (events?.onLoad && typeof events?.onLoad === "function") {
-        await events.onLoad();
-      }
-      if (!events?.name) {
+      try {
+        const events = (await import(`../event/${event}`)).default;
+        if (events?.onLoad && typeof events?.onLoad === "function") {
+          await events.onLoad();
+        }
+        if (!events?.name) {
+          log([
+            { message: "[ الأحداث ]: ", color: "yellow" },
+            { message: `تعذر تحميل الحدث: ${event} لأنه لا يحتوي على اسم`, color: "red" },
+          ]);
+          continue;
+        }
+        if (typeof events?.execute !== "function") {
+          log([
+            { message: "[ الأحداث ]: ", color: "yellow" },
+            { message: `تعذر تحميل الحدث: ${event} لأنه لا يحتوي على دالة التنفيذ`, color: "red" },
+          ]);
+          continue;
+        }
+        await global.client.events.set(events.name, events);
+        await log([
+          { message: "[ الأحداث ]: ", color: "yellow" },
+          { message: `تم تحميل الحدث بنجاح: ./event/${events.name}`, color: "white" },
+        ]);
+      } catch (error) {
         log([
-          {
-            message: "[ EVENT ]: ",
-            color: "yellow",
-          },
-          {
-            message: `Failed to load event: ${event} because it lacks event name`,
-            color: "red",
-          },
+          { message: "[ الأحداث ]: ", color: "yellow" },
+          { message: `تعذر تحميل الحدث: ${event} بسبب خطأ: ${error.message}`, color: "red" },
         ]);
         continue;
       }
-      if (typeof events?.execute !== "function") {
-        log([
-          {
-            message: "[ EVENT ]: ",
-            color: "yellow",
-          },
-          {
-            message: `Failed to load event: ${event} because it lacks execute function`,
-            color: "red",
-          },
-        ]);
-        continue;
-      }
-      await global.client.events.set(events.name, events);
-      await log([
-        {
-          message: "[ EVENT ]: ",
-          color: "yellow",
-        },
-        {
-          message: `Successfully loaded event: ./event/${events.name}`,
-          color: "white",
-        },
-      ]); 
     }
   } catch (error) {
     log([
-      {
-        message: "[ EVENT ]: ",
-        color: "yellow",
-      },
-      {
-        message: `Failed to load event due to error: ${error}`,
-        color: "red",
-      },
+      { message: "[ الأحداث ]: ", color: "yellow" },
+      { message: `تعذر قراءة مجلد الأحداث: ${error.message}`, color: "red" },
     ]);
   }
 };

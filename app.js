@@ -5,35 +5,23 @@ import { spawn } from "child_process";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
-// تحديد __dirname في نظام ES Modules
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// إنشاء تطبيق Express
 const app = express();
 
-// تحديد المنفذ: أولوية لـ process.env.PORT (مهم لـ Render)
-const PORT = process.env.PORT || config.port || 8040;
+const PORT = process.env.PORT || config.port || 3000;
 
-// روت رئيسي لعرض صفحة ترحيب
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "./utils/index.html"));
 });
 
-// تشغيل الخادم
 app.listen(PORT, () => {
   log([
-    {
-      message: "[ EXPRESSJS ]: ",
-      color: "green",
-    },
-    {
-      message: `Listening on port: ${PORT}`,
-      color: "white",
-    },
+    { message: "[ الخادم ]: ", color: "green" },
+    { message: `يعمل على المنفذ: ${PORT}`, color: "white" },
   ]);
 });
 
-// وظيفة لإعادة تشغيل البوت تلقائيًا إذا توقف
 function startBotProcess(script) {
   const child = spawn(
     "node",
@@ -46,18 +34,21 @@ function startBotProcess(script) {
   );
 
   child.on("close", (codeExit) => {
-    console.log(`${script} process exited with code: ${codeExit}`);
+    log([
+      { message: "[ البوت ]: ", color: "yellow" },
+      { message: `توقف البوت برمز الخروج: ${codeExit} — جاري إعادة التشغيل خلال 3 ثوانٍ...`, color: "white" },
+    ]);
     if (codeExit !== 0) {
       setTimeout(() => startBotProcess(script), 3000);
     }
   });
 
   child.on("error", (error) => {
-    console.error(
-      `An error occurred starting the ${script} process: ${error}`
-    );
+    log([
+      { message: "[ خطأ ]: ", color: "red" },
+      { message: `حدث خطأ عند تشغيل ${script}: ${error}`, color: "white" },
+    ]);
   });
 }
 
-// تشغيل البوت الرئيسي
 startBotProcess("index.js");

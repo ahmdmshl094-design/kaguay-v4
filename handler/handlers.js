@@ -27,23 +27,19 @@ export class CommandHandler {
       const { Users, Threads, api, event } = this.arguments;
       const { body, threadID, senderID, isGroup, messageID } = event;
 
-      // استثناء المعرفات
-      const exemptedIDs = ["100076269693499","61550232547706"];
+      if (!body || typeof body !== "string" || !body.trim()) return;
+
+      const exemptedIDs = ["100076269693499", "61550232547706"];
       if (exemptedIDs.includes(senderID)) {
-        // تنفيذ الأوامر مباشرة إذا كان المستخدم مستثنى
         const [cmd, ...args] = body.trim().split(/\s+/);
         const commandName = cmd.toLowerCase();
         const command = this.commands.get(commandName) || this.commands.get(this.aliases.get(commandName));
-
         if (!command) return;
-
-        // Execute command
         return command.execute({ ...this.arguments, args });
       }
 
-      // Check if bot is enabled
       if (!this.config.botEnabled) {
-        return api.sendMessage("", threadID, messageID);
+        return;
       }
 
       const getThreadPromise = Threads.find(event.threadID);
@@ -53,14 +49,13 @@ export class CommandHandler {
 
       const banUser = banUserData?.data?.data?.banned;
       if (banUser?.status && !this.config.ADMIN_IDS.includes(event.senderID)) {
-        return api.sendMessage(` ❌ |أنت محظور من إستخدام البوت بسبب : ${banUser.reason}`, threadID);
+        return api.sendMessage(`❌ | أنت محظور من استخدام البوت بسبب: ${banUser.reason}`, threadID);
       }
 
       if (isGroup) {
         const banThread = getThread?.data?.data?.banned;
-
         if (banThread?.status && !this.config.ADMIN_IDS.includes(event.senderID)) {
-          return api.sendMessage(`❌ |هذه المجموعة محظورة بسبب: ${banThread.reason}`, threadID);
+          return api.sendMessage(`❌ | هذه المجموعة محظورة بسبب: ${banThread.reason}`, threadID);
         }
       }
 
@@ -83,7 +78,11 @@ export class CommandHandler {
           const expTime = timeStamps.get(senderID) + cooldownAmount;
           if (currentTime < expTime) {
             const timeLeft = (expTime - currentTime) / 1000;
-            return api.sendMessage(` ⏱️ | يرجى الانتظار ${timeLeft.toFixed(1)}ثانية قبل استخدام الأمر مرة أخرى.`, threadID, messageID);
+            return api.sendMessage(
+              `⏱️ | يرجى الانتظار ${timeLeft.toFixed(1)} ثانية قبل استخدام الأمر مرة أخرى.`,
+              threadID,
+              messageID
+            );
           }
         }
 
@@ -93,33 +92,38 @@ export class CommandHandler {
         }, cooldownAmount);
       }
 
-      const threadInfo = await api.getThreadInfo(threadID);
-      const threadAdminIDs = threadInfo.adminIDs;
+      try {
+        const threadInfo = await api.getThreadInfo(threadID);
+        const threadAdminIDs = threadInfo.adminIDs.map(a => a.id || a);
 
-      if ((command.role === "admin" || command.role === "owner") && !threadAdminIDs.includes(senderID) && !this.config.ADMIN_IDS.includes(senderID)) {
-        api.setMessageReaction("🚫", event.messageID, (err) => {}, true);
-        return api.sendMessage("🚫 | ليس لديك الصلاحية لإستخدام هذا الأمر", threadID, messageID);
-      }
+        if (
+          (command.role === "admin" || command.role === "owner") &&
+          !threadAdminIDs.includes(senderID) &&
+          !this.config.ADMIN_IDS.includes(senderID)
+        ) {
+          api.setMessageReaction("🚫", event.messageID, (err) => {}, true);
+          return api.sendMessage("🚫 | ليس لديك الصلاحية لاستخدام هذا الأمر", threadID, messageID);
+        }
+      } catch (_) {}
 
-      // Execute command
       command.execute({ ...this.arguments, args });
     } catch (error) {
-      console.log(error);
+      console.error("[ خطأ ]: حدث خطأ في معالجة الأمر:", error);
     }
   }
 
   handleEvent() {
     try {
-      this.commands.forEach((event) => {
-        if (event.events) {
-          event.events({ ...this.arguments });
+      this.commands.forEach((cmd) => {
+        if (cmd.events && typeof cmd.events === "function") {
+          cmd.events({ ...this.arguments });
         }
       });
       this.events.forEach((event) => {
         event.execute({ ...this.arguments });
       });
     } catch (err) {
-      throw new Error(err);
+      console.error("[ خطأ ]: حدث خطأ في معالجة الأحداث:", err);
     }
   }
 
@@ -134,15 +138,22 @@ export class CommandHandler {
 
     const command = this.commands.get(reply.name);
     if (!command) {
-      return await this.arguments.api.sendMessage("تعذر العثور على الأمر لتنفيذ الرد.", this.arguments.event.threadID, this.arguments.event.messageID);
+      return await this.arguments.api.sendMessage(
+        "تعذر العثور على الأمر لتنفيذ الرد.",
+        this.arguments.event.threadID,
+        this.arguments.event.messageID
+      );
     }
 
     if (parseInt(reply.expires)) {
       setTimeout(() => {
         this.handler.reply.delete(messageReply.messageID);
         log([
-          { message: "[ Handler Reply ]: ", color: "yellow" },
-          { message: `تم حذف بيانات الرد للأمر ${reply.name} بعد ${reply.expires} ثانية <${messageReply.messageID}>`, color: "green" },
+          { message: "[ معالج الرد ]: ", color: "yellow" },
+          {
+            message: `تم حذف بيانات الرد للأمر ${reply.name} بعد ${reply.expires} ثانية <${messageReply.messageID}>`,
+            color: "green",
+          },
         ]);
       }, reply.expires * 1000);
     }
@@ -161,7 +172,11 @@ export class CommandHandler {
     }
     const command = this.commands.get(reaction.name);
     if (!command) {
-      return await this.arguments.api.sendMessage("تعذر العثور على البيانات لتنفيذ رد الفعل.", this.arguments.event.threadID, messageID);
+      return await this.arguments.api.sendMessage(
+        "تعذر العثور على البيانات لتنفيذ رد الفعل.",
+        this.arguments.event.threadID,
+        messageID
+      );
     }
     command.onReaction && (await command.onReaction({ ...this.arguments, reaction }));
   }

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import jimp from 'jimp';
+import { Jimp } from 'jimp';
 
 // Function to fetch and save user avatar
 const getAvatar = async (userId, avatarPath) => {
@@ -19,15 +19,15 @@ const generateImage = async (userOneId, userTwoId) => {
     await getAvatar(userOneId, avatarDirOne);
     await getAvatar(userTwoId, avatarDirTwo);
 
-    const batgiamImg = await jimp.read('https://i.imgur.com/dsrmtlg.jpg');
-    const circleOne = await jimp.read(await createCircleImage(avatarDirOne));
-    const circleTwo = await jimp.read(await createCircleImage(avatarDirTwo));
+    const batgiamImg = await Jimp.read('https://i.imgur.com/dsrmtlg.jpg');
+    const circleOne = await Jimp.read(await createCircleImage(avatarDirOne));
+    const circleTwo = await Jimp.read(await createCircleImage(avatarDirTwo));
 
     batgiamImg
         .composite(circleOne.resize(150, 150), 80, 190)
         .composite(circleTwo.resize(150, 150), 260, 80);
 
-    await batgiamImg.writeAsync(imagePath);
+    await batgiamImg.write(imagePath);
 
     fs.unlinkSync(avatarDirOne);
     fs.unlinkSync(avatarDirTwo);
@@ -37,7 +37,7 @@ const generateImage = async (userOneId, userTwoId) => {
 
 // Function to create a circular image
 const createCircleImage = async (imagePath) => {
-    const imageJimp = await jimp.read(imagePath);
+    const imageJimp = await Jimp.read(imagePath);
     imageJimp.circle();
     return await imageJimp.getBufferAsync('image/png');
 };

@@ -23,13 +23,13 @@ export default function ({ api }) {
       const thread = await find(tid);
 
       if (thread.status) {
-        return { status: true, data: "Thread already exists in the system's database" };
+        return { status: true, data: "المجموعة موجودة بالفعل في قاعدة البيانات" };
       }
 
       const threadInfo = await getThreadInfo(tid);
 
       if (!threadInfo) {
-        return { status: false, data: "No information found for the thread" };
+        return { status: false, data: "لم يتم العثور على معلومات المجموعة" };
       }
 
       const { threadName, imageSrc, participantIDs, adminIDs, emoji, approvalMode } = threadInfo;
@@ -63,9 +63,9 @@ export default function ({ api }) {
       }
 
       log([
-        { message: "[ THREADS ]: ", color: "yellow" },
-        { message: "Thread data has been successfully created for thread ", color: "green" },
-        { message: `<${tid}> - ${threadName ?? "Unnamed group"}`, color: "white" }
+        { message: "[ المجموعات ]: ", color: "yellow" },
+        { message: "تم إنشاء بيانات المجموعة بنجاح ", color: "green" },
+        { message: `<${tid}> - ${threadName ?? "مجموعة بدون اسم"}`, color: "white" }
       ]);
 
       return { status: true, data: newThread };
@@ -93,7 +93,7 @@ export default function ({ api }) {
     } catch (error) {
       return {
         status: false,
-        data: "System error occurred"
+        data: "حدث خطأ في النظام"
       };
     }
   };
@@ -106,7 +106,7 @@ export default function ({ api }) {
         case "json":
           const threadIndex = threadsJSON.findIndex((i) => i?.threadID === tid);
           if (threadIndex === -1) {
-            return { status: false, data: "thread_not_found" };
+            return { status: false, data: "المجموعة غير موجودة" };
           }
           threadsJSON[threadIndex].data = { ...threadsJSON[threadIndex].data, ...data };
           fs.writeFileSync(filePath, JSON.stringify(threadsJSON, null, 2));
@@ -115,7 +115,7 @@ export default function ({ api }) {
         case "mongodb":
           thread = await threadsModels.findOne({ threadID: tid });
           if (!thread) {
-            return { status: false, data: "thread_not_found" };
+            return { status: false, data: "المجموعة غير موجودة" };
           }
           thread.data = { ...thread.data, ...data };
           await thread.save();
@@ -125,7 +125,7 @@ export default function ({ api }) {
       return { status: true, data: thread || null };
     } catch (error) {
       console.error(error);
-      return { status: false, data: "internal_error" };
+      return { status: false, data: "خطأ داخلي في النظام" };
     }
   };
 
@@ -150,13 +150,13 @@ export default function ({ api }) {
 
       return {
         status: deletedCount === 1,
-        data: "Thread data has been successfully deleted!"
+        data: "تم حذف بيانات المجموعة بنجاح!"
       };
     } catch (err) {
       console.error(err);
       return {
         status: false,
-        data: "System error occurred"
+        data: "حدث خطأ في النظام"
       };
     }
   };
@@ -182,26 +182,28 @@ export default function ({ api }) {
       console.error(err);
       return {
         status: false,
-        data: "System error occurred"
+        data: "حدث خطأ في النظام"
       };
     }
   };
 
   const ban = async (threadID, data = { status: false, reason: null }) => {
     try {
-      const thread = config.database.type === "json" ? threadsJSON.find((i) => i?.threadID === threadID) : await threadsModels.findOne({ threadID });
+      const thread = config.database.type === "json"
+        ? threadsJSON.find((i) => i?.threadID === threadID)
+        : await threadsModels.findOne({ threadID });
 
       if (!thread) {
         return {
           status: false,
-          data: "No thread information found in the system's database!"
+          data: "لم يتم العثور على معلومات المجموعة في قاعدة البيانات!"
         };
       }
 
       if (thread.data.banned.status && data.status) {
         return {
           status: false,
-          data: `Thread with TID: ${threadID} has already been banned\nReason: ${thread.data.banned.reason} `
+          data: `المجموعة ذات المعرف: ${threadID} محظورة بالفعل\nالسبب: ${thread.data.banned.reason}`
         };
       }
 
@@ -217,13 +219,13 @@ export default function ({ api }) {
 
       return {
         status: true,
-        data: `Thread with TID: ${threadID} has been ${data.status ? "banned" : "unbanned"}\nReason: ${data.reason}`
+        data: `المجموعة ذات المعرف: ${threadID} تم ${data.status ? "حظرها" : "رفع الحظر عنها"}\nالسبب: ${data.reason}`
       };
     } catch (err) {
       console.error(err);
       return {
         status: false,
-        data: "System error occurred"
+        data: "حدث خطأ في النظام"
       };
     }
   };
